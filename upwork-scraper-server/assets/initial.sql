@@ -14,6 +14,7 @@ create table if not exists category (
 );
 
 create table if not exists job (
+   cipher varchar,
    title varchar,
    description varchar,
    amount int,
