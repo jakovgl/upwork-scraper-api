@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using upwork_scraper_server.models;
+using Newtonsoft.Json;
+using upwork_scraper_server.dtos;
 
 namespace upwork_scraper_server.services
 {
@@ -30,9 +31,17 @@ namespace upwork_scraper_server.services
             return await client.SendAsync(requestMessage);
         }
             
-        private async Task<List<Job>> DeserializeResponse(HttpResponseMessage response)
+        private async Task<List<ResponseDtos.Job>> DeserializeResponse(HttpResponseMessage response)
         {
-            return null;
+            var deserializedObjects = JsonConvert.DeserializeObject<ResponseDtos.Response>(await response.Content.ReadAsStringAsync())?.Results;
+
+            if (deserializedObjects == null)
+            {
+                // TODO: Set the active flag to false
+                // TODO: Throw some kind of an error
+            }
+
+            return deserializedObjects;
         }
 
         private bool EvaluateJob(Object job)

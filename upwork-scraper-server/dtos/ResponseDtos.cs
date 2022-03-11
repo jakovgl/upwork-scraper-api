@@ -4,12 +4,12 @@ namespace upwork_scraper_server.dtos
 {
     public class ResponseDtos
     {
-        class Response
+        public class Response
         {
             public List<Job> Results { get; set; }
         }
 
-        class Job
+        public class Job
         {
             public string Title { get; set; }
             public string Description { get; set; }
@@ -22,13 +22,13 @@ namespace upwork_scraper_server.dtos
             public string CipherText { get; set; }
         }
 
-        class AmountDto
+        public  class AmountDto
         {
             public string CurrencyCode { get; set; }
             public int Amount { get; set; }
         }
 
-        class Attrs
+        public  class Attrs
         {
             public string PrettyName { get; set; }
         }
