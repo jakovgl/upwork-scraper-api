@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentScheduler;
 using Newtonsoft.Json;
 using upwork_scraper_server.dtos;
 
@@ -10,12 +11,25 @@ namespace upwork_scraper_server.services
     public class ScraperService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        public ScraperService(IHttpClientFactory httpClientFactory) => _httpClientFactory = httpClientFactory;
+        private readonly SettingsService _settingsService;
+
+        public ScraperService(IHttpClientFactory httpClientFactory, SettingsService settingsService)
+        {
+            _httpClientFactory = httpClientFactory;
+            _settingsService = settingsService;
+        }
         
         public void Scrape()
         {
             // main scraping method
             var client = _httpClientFactory.CreateClient();
+            var settings = _settingsService.GetSettings();
+
+            JobManager.Initialize();
+            JobManager.AddJob(
+                    () => Console.WriteLine("5 seconds later..."),
+                    s => s.ToRunEvery(5).Seconds()
+                );
         }
 
         private async Task<HttpResponseMessage> SendRequestAsync(HttpClient client, string cookie)

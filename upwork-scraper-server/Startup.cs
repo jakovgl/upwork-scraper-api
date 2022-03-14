@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentScheduler;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using upwork_scraper_server.registry;
 using upwork_scraper_server.services;
 
 namespace upwork_scraper_server
@@ -23,6 +25,8 @@ namespace upwork_scraper_server
             
             services.AddControllers();
             services.AddHttpContextAccessor();
+            
+            JobManager.Initialize(new ScraperRegistry());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
