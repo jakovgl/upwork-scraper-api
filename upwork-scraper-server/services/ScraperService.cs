@@ -25,11 +25,7 @@ namespace upwork_scraper_server.services
             var client = _httpClientFactory.CreateClient();
             var settings = _settingsService.GetSettings();
 
-            JobManager.Initialize();
-            JobManager.AddJob(
-                    () => Console.WriteLine("5 seconds later..."),
-                    s => s.ToRunEvery(5).Seconds()
-                );
+            Console.WriteLine("this is working.");
         }
 
         private async Task<HttpResponseMessage> SendRequestAsync(HttpClient client, string cookie)
