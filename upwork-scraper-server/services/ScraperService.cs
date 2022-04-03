@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentScheduler;
 using Newtonsoft.Json;
 using upwork_scraper_server.dtos;
 
@@ -19,13 +18,20 @@ namespace upwork_scraper_server.services
             _settingsService = settingsService;
         }
         
-        public void Scrape()
+        public async void Scrape()
         {
             // main scraping method
             var client = _httpClientFactory.CreateClient();
             var settings = _settingsService.GetSettings();
 
-            Console.WriteLine("this is working.");
+            if (!settings.Active)
+                return;
+            
+            Console.WriteLine("Its active");
+            var response = await SendRequestAsync(client, settings.Cookie);
+            var jobs = await DeserializeResponse(response);
+            
+            jobs.ForEach(job => EvaluateJob(job));
         }
 
         private async Task<HttpResponseMessage> SendRequestAsync(HttpClient client, string cookie)
@@ -54,7 +60,7 @@ namespace upwork_scraper_server.services
             return deserializedObjects;
         }
 
-        private bool EvaluateJob(Object job)
+        private bool EvaluateJob(ResponseDtos.Job job)
         {
             // check if job qualifies for the notification
             return false;
