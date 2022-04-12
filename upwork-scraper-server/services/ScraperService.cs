@@ -49,12 +49,21 @@ namespace upwork_scraper_server.services
             
         private async Task<List<ResponseDtos.Job>> DeserializeResponse(HttpResponseMessage response)
         {
-            var deserializedObjects = JsonConvert.DeserializeObject<ResponseDtos.Response>(await response.Content.ReadAsStringAsync())?.Results;
+            List<ResponseDtos.Job> deserializedObjects = null;
+            try
+            {
+                deserializedObjects = JsonConvert.DeserializeObject<ResponseDtos.Response>(await response.Content.ReadAsStringAsync())?.Results;
+            }
+            catch (Exception e)
+            {
+                _settingsService.SetActive(false);
+                // TODO: Send some kind of Telegram message                
+            }
 
             if (deserializedObjects == null)
             {
-                // TODO: Set the active flag to false
-                // TODO: Throw some kind of an error
+                _settingsService.SetActive(false);
+                // TODO: Send some kind of Telegram message
             }
 
             return deserializedObjects;

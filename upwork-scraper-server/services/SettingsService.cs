@@ -28,12 +28,12 @@ namespace upwork_scraper_server.services
             return connection.Query<Settings>("select * from settings").First();
         }
 
-        public void SetActive(string active)
+        public void SetActive(bool active)
         {
             using var connection = new NpgsqlConnection(CONNECTION_STRING);
             connection.Open();
 
-            connection.Execute($"update settings set active = {active};");
+            connection.Execute($"update settings set active = {active.ToString()};");
         }
     }
 }
