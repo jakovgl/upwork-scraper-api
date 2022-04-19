@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using upwork_scraper_server.dtos;
+using upwork_scraper_server.models;
 
 namespace upwork_scraper_server.services
 {
@@ -31,7 +32,14 @@ namespace upwork_scraper_server.services
             var response = await SendRequestAsync(client, settings.Cookie);
             var jobs = await DeserializeResponse(response);
             
-            jobs.ForEach(job => EvaluateJob(job));
+            jobs.ForEach(job =>
+            {
+                if (EvaluateJob(job, settings))
+                {
+                    // TODO: Send Telegram message
+                    // TODO: Save to DB
+                }
+            });
         }
 
         private async Task<HttpResponseMessage> SendRequestAsync(HttpClient client, string cookie)
@@ -41,7 +49,11 @@ namespace upwork_scraper_server.services
             {
                 Method = HttpMethod.Get,
                 RequestUri = new Uri("https://www.upwork.com/ab/find-work/api/feeds/embeddings-recommendations"),
-                Headers = {{ "cookie", cookie }}
+                Headers =
+                {
+                    { "cookie", cookie }, 
+                    { "x-requested-with", "XMLHttpRequest" }
+                }
             };
 
             return await client.SendAsync(requestMessage);
@@ -69,9 +81,13 @@ namespace upwork_scraper_server.services
             return deserializedObjects;
         }
 
-        private bool EvaluateJob(ResponseDtos.Job job)
+        // check if job qualifies for the notification
+        private bool EvaluateJob(ResponseDtos.Job job, Settings settings)
         {
-            // check if job qualifies for the notification
+            if (job.ShortEngagement.Equals(settings.Engagement))
+            {
+                return true;
+            }
             return false;
         }
     }
