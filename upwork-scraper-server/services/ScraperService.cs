@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -84,11 +85,8 @@ namespace upwork_scraper_server.services
         // check if job qualifies for the notification
         private bool EvaluateJob(ResponseDtos.Job job, Settings settings)
         {
-            if (job.ShortEngagement.Equals(settings.Engagement))
-            {
-                return true;
-            }
-            return false;
+            return (job.ShortEngagement is null || job.ShortEngagement.Equals(settings.Engagement)) &&
+                   (job.Attrs.Any(x => settings.Categories.Contains(x.PrettyName)));
         }
     }
 }

@@ -10,7 +10,7 @@ create table if not exists settings (
 
 create table if not exists category (
     id serial primary key,
-    varchar name
+    name varchar
 );
 
 create table if not exists job (

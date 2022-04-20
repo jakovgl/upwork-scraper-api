@@ -1,3 +1,4 @@
+
 namespace upwork_scraper_server.models
 {
     public class Settings
@@ -7,5 +8,6 @@ namespace upwork_scraper_server.models
         public string TelegramApiKey { get; set; }
         public string TelegramChatId { get; set; }
         public string Engagement { get; set; }
+        public string Categories { get; set; }
     }
 }
