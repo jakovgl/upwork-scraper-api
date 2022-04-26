@@ -13,11 +13,20 @@ namespace upwork_scraper_server.services
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly SettingsService _settingsService;
+        private readonly TelegramService _telegramService;
+        private readonly JobService _jobService;
 
-        public ScraperService(IHttpClientFactory httpClientFactory, SettingsService settingsService)
+        public ScraperService(
+            IHttpClientFactory httpClientFactory, 
+            SettingsService settingsService, 
+            TelegramService telegramService,
+            JobService jobService
+            )
         {
             _httpClientFactory = httpClientFactory;
             _settingsService = settingsService;
+            _telegramService = telegramService;
+            _jobService = jobService;
         }
         
         public async void Scrape()
@@ -38,7 +47,7 @@ namespace upwork_scraper_server.services
                 if (EvaluateJob(job, settings))
                 {
                     // TODO: Send Telegram message
-                    // TODO: Save to DB
+                    _jobService.SaveJob(job);
                 }
             });
         }
@@ -70,13 +79,13 @@ namespace upwork_scraper_server.services
             catch (Exception e)
             {
                 _settingsService.SetActive(false);
-                // TODO: Send some kind of Telegram message                
+                await _telegramService.SendErrorMessage();                
             }
 
             if (deserializedObjects == null)
             {
                 _settingsService.SetActive(false);
-                // TODO: Send some kind of Telegram message
+                await _telegramService.SendErrorMessage();
             }
 
             return deserializedObjects;
@@ -86,7 +95,8 @@ namespace upwork_scraper_server.services
         private bool EvaluateJob(ResponseDtos.Job job, Settings settings)
         {
             return (job.ShortEngagement is null || job.ShortEngagement.Equals(settings.Engagement)) &&
-                   (job.Attrs.Any(x => settings.Categories.Contains(x.PrettyName)));
+                   (job.Attrs.Any(x => settings.Categories.Contains(x.PrettyName)) &&
+                   (!_jobService.JobExists(job.CipherText)));
         }
     }
 }

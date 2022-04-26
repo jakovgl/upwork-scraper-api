@@ -3,8 +3,6 @@ begin;
 create table if not exists settings (
     active boolean,
     cookie varchar,
-    telegram_api_key varchar,
-    telegram_chat_id varchar,
     engagement varchar
 );
 
@@ -14,6 +12,7 @@ create table if not exists category (
 );
 
 create table if not exists job (
+   id bigserial, 
    cipher varchar,
    title varchar,
    description varchar,

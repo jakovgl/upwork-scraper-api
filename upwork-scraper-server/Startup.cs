@@ -18,6 +18,7 @@ namespace upwork_scraper_server
 
             services.AddScoped<SettingsService>();
             services.AddScoped<ScraperService>();
+            services.AddSingleton<TelegramService>();
 
             services.AddControllers();
             services.AddHttpContextAccessor();
