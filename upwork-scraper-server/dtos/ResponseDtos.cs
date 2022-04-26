@@ -22,13 +22,13 @@ namespace upwork_scraper_server.dtos
             public string CipherText { get; set; }
         }
 
-        public  class AmountDto
+        public class AmountDto
         {
             public string CurrencyCode { get; set; }
             public int Amount { get; set; }
         }
 
-        public  class Attrs
+        public class Attrs
         {
             public string PrettyName { get; set; }
         }
